@@ -41,11 +41,13 @@ AssimpInterface::~AssimpInterface()
 bool AssimpInterface::ConvertFBXFiles(char* exeFolderLocation)
 {
     rootpath = std::filesystem::path(std::filesystem::current_path());
-
+    
     // account for whether or not we're running through Visual Studio vs the .Bat file.
     if (exeFolderLocation != nullptr)
     {
-        rootpath = rootpath.parent_path().parent_path().parent_path().parent_path().parent_path().parent_path();
+        std::string _text = exeFolderLocation;
+        _text = _text.substr(0, _text.size() - 1);
+        rootpath = _text.c_str(); //rootpath.parent_path().parent_path().parent_path().parent_path().parent_path().parent_path();
     }
     else
     {
