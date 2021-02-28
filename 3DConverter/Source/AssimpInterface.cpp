@@ -40,13 +40,9 @@ AssimpInterface::~AssimpInterface()
 
 bool AssimpInterface::ConvertFBXFiles(char* exeFolderLocation)
 {
-    std::cout << std::endl;
-    std::cout << "INTERFACE BEGIN";
-    std::cout << std::endl;
     rootpath = std::filesystem::path(std::filesystem::current_path());
 
     // account for whether or not we're running through Visual Studio vs the .Bat file.
-
     if (exeFolderLocation != nullptr)
     {
         rootpath = rootpath.parent_path().parent_path().parent_path().parent_path().parent_path().parent_path();
@@ -59,22 +55,19 @@ bool AssimpInterface::ConvertFBXFiles(char* exeFolderLocation)
     std::filesystem::path inputDirectory = rootpath;
     inputDirectory.append("InputFiles\\");
 
+    std::filesystem::path outputDirectory = rootpath;
+    outputDirectory.append("OutputFiles\\");
+
+    { // add input and output dirs if they don't exist.
+        std::filesystem::create_directory(outputDirectory);
+        std::filesystem::create_directory(inputDirectory);
+    }
+
     std::vector <std::string> inPaths;
-
-    //for (std::filesystem::directory_iterator end, dir(inputDirectory); dir != end; dir++) 
-    //{
-    //    std::cout << *dir << std::endl;
-    //}
-
-    //std::cout << "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 
     for (auto& file : std::filesystem::directory_iterator(inputDirectory))
     {
     std::cout << file.path().string() << '\n';
-    //}
-
-    //for (std::filesystem::directory_entry file : std::filesystem::directory_iterator(inputDirectory))
-    //{ 
 
     AssimpImport(file.path());
     fileNames.push_back(file.path().filename().string());
@@ -93,8 +86,6 @@ bool AssimpInterface::AssimpImport(std::filesystem::path filepath)
     OutputDirectory.append("OutputFiles\\");
 
     Assimp::Importer importer;
-    //std::cout << std::endl;
-    //std::cout << pFile << std::endl;
 
     const aiScene* scene = importer.ReadFile(pFile,
         aiProcess_CalcTangentSpace |
@@ -110,7 +101,6 @@ bool AssimpInterface::AssimpImport(std::filesystem::path filepath)
 
     // Now we can access the file's contents.
     aiMesh* mesh = scene->mMeshes[0];
-    //std::cout << mesh->mNumFaces << std::endl;;
 
     // remove the .fbx from the file names and swap it for .bin.
     size_t dotIndex = filepath.filename().string().find_last_of(".");
