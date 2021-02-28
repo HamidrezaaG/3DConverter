@@ -2,14 +2,14 @@
 -- Workspace
 -----------------------------------------------------
 workspace "Workspace"
-	configurations	{ "Debug", "Release" }
+	configurations	{ "Release" }
 	platforms		{ "x64" }
 	location		"../../build"
 	characterset	"MBCS"
 	startproject	"3DConverter"
 
-	filter "configurations:Debug"
-		symbols		"on"
+	-- filter "configurations:Debug"
+	--	symbols		"on"
 
 -----------------------------------------------------
 -- 3DConverter
@@ -20,7 +20,7 @@ project "3DConverter"
 	debugdir	"$(SolutionDir)"
 	cppdialect "C++17"
 	
-	configurations	{ "Debug" }
+	configurations	{ "Release" }
 		
 	files {
 		"../../Source/**.h",
@@ -48,7 +48,7 @@ project "Assimp"
 	debugdir	"$(SolutionDir)"
 	cppdialect "C++17"
 
-	configurations	{ "Debug", "Release" }
+	configurations	{ "Release" }
 	
 	targetdir ("../../build/Assimp")
 	objdir ("../../build/Assimp")
@@ -69,7 +69,7 @@ project "Assimp"
 		"ASSIMP_BUILD_NO_MD2_IMPORTER",
 		"ASSIMP_BUILD_NO_PLY_IMPORTER",
 		"ASSIMP_BUILD_NO_ASE_IMPORTER",
-		-- "ASSIMP_BUILD_NO_OBJ_IMPORTER",
+		-- 	"ASSIMP_BUILD_NO_OBJ_IMPORTER",
 		"ASSIMP_BUILD_NO_AMF_IMPORTER",
 		"ASSIMP_BUILD_NO_HMP_IMPORTER",
 		"ASSIMP_BUILD_NO_SMD_IMPORTER",
@@ -87,7 +87,7 @@ project "Assimp"
 		"ASSIMP_BUILD_NO_IRR_IMPORTER",
 		"ASSIMP_BUILD_NO_Q3D_IMPORTER",
 		"ASSIMP_BUILD_NO_B3D_IMPORTER",
-		-- "ASSIMP_BUILD_NO_COLLADA_IMPORTER",
+		-- 	"ASSIMP_BUILD_NO_COLLADA_IMPORTER",
 		"ASSIMP_BUILD_NO_TERRAGEN_IMPORTER",
 		"ASSIMP_BUILD_NO_CSM_IMPORTER",
 		"ASSIMP_BUILD_NO_3D_IMPORTER",
@@ -101,7 +101,7 @@ project "Assimp"
 		"ASSIMP_BUILD_NO_NDO_IMPORTER",
 		"ASSIMP_BUILD_NO_IFC_IMPORTER",
 		"ASSIMP_BUILD_NO_XGL_IMPORTER",
-		--"ASSIMP_BUILD_NO_FBX_IMPORTER",
+		--	"ASSIMP_BUILD_NO_FBX_IMPORTER",
 		"ASSIMP_BUILD_NO_ASSBIN_IMPORTER",
 		"ASSIMP_BUILD_NO_GLTF_IMPORTER",
 		"ASSIMP_BUILD_NO_C4D_IMPORTER",
@@ -112,19 +112,19 @@ project "Assimp"
 		"ASSIMP_BUILD_NO_STEP_EXPORTER",
 		"ASSIMP_BUILD_NO_SIB_IMPORTER",
 	
-		-- "ASSIMP_BUILD_NO_MAKELEFTHANDED_PROCESS",
-		-- "ASSIMP_BUILD_NO_FLIPUVS_PROCESS",
-		-- "ASSIMP_BUILD_NO_FLIPWINDINGORDER_PROCESS",
-		-- "ASSIMP_BUILD_NO_CALCTANGENTS_PROCESS",
+		-- 	"ASSIMP_BUILD_NO_MAKELEFTHANDED_PROCESS",
+		--	"ASSIMP_BUILD_NO_FLIPUVS_PROCESS",
+		-- 	"ASSIMP_BUILD_NO_FLIPWINDINGORDER_PROCESS",
+		-- 	"ASSIMP_BUILD_NO_CALCTANGENTS_PROCESS",
 		"ASSIMP_BUILD_NO_JOINVERTICES_PROCESS",
-		-- "ASSIMP_BUILD_NO_TRIANGULATE_PROCESS",
+		-- 	"ASSIMP_BUILD_NO_TRIANGULATE_PROCESS",
 		"ASSIMP_BUILD_NO_GENFACENORMALS_PROCESS",
-		-- "ASSIMP_BUILD_NO_GENVERTEXNORMALS_PROCESS",
+		-- 	"ASSIMP_BUILD_NO_GENVERTEXNORMALS_PROCESS",
 		"ASSIMP_BUILD_NO_REMOVEVC_PROCESS",
 		"ASSIMP_BUILD_NO_SPLITLARGEMESHES_PROCESS",
 		"ASSIMP_BUILD_NO_PRETRANSFORMVERTICES_PROCESS",
 		"ASSIMP_BUILD_NO_LIMITBONEWEIGHTS_PROCESS",
-		-- "ASSIMP_BUILD_NO_VALIDATEDS_PROCESS",
+		-- 	"ASSIMP_BUILD_NO_VALIDATEDS_PROCESS",
 		"ASSIMP_BUILD_NO_IMPROVECACHELOCALITY_PROCESS",
 		"ASSIMP_BUILD_NO_FIXINFACINGNORMALS_PROCESS",
 		"ASSIMP_BUILD_NO_REMOVE_REDUNDANTMATERIALS_PROCESS",
@@ -145,11 +145,7 @@ project "Assimp"
 	
 	
 	files {
-	
-	--"../../Source/**.h",
-	--"../../Source/**.cpp",
-	--"premake5.lua",
-		
+
 	"../../Libraries/assimp/include/assimp/*.h",
 	"../../Libraries/assimp/include/assimp/*.cpp",
 
@@ -182,6 +178,7 @@ project "Assimp"
 	"../../Libraries/assimp/contrib/zip/src/*.c",
 	"../../Libraries/assimp/contrib/zlib/*.h",
 	"../../Libraries/assimp/contrib/zlib/*.c",
+	
 	}
 	excludes { 
 	"../../Libraries/assimp/contrib/zlib/gzlib.c",
@@ -190,7 +187,6 @@ project "Assimp"
 	}
 
 	includedirs {
-		--"$(SolutionDir)../../Source",
 		"../configs",
 		"$(SolutionDir)Assimp",
 		"$(SolutionDir)../Libraries/assimp/code",
@@ -206,10 +202,10 @@ project "Assimp"
 	filter "system:windows"
       systemversion "latest"
 
-	filter  "configurations:Debug"
-       runtime "Debug"
-       symbols "on"
+	--filter  "configurations:Debug"
+    --   runtime "Debug"
+    --   symbols "on"
 
-	filter  "configurations:Release"
-       runtime "Release"
-       optimize "on"
+	--filter  "configurations:Release"
+    --   runtime "Release"
+    --   optimize "on"

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "AssimpInterface.h"
 
+const float version = 1.0f;
 
 int main(/*int argc, char* argv[]*/)
 {
@@ -17,7 +18,9 @@ int main(/*int argc, char* argv[]*/)
     
     std::cout << "///////// FAKE ///////////" << std::endl;
     //std::cout << fargv[1] << std::endl;
-    interface.LoadFBX();
+    std::cout << std::endl;
+
+    interface.GrabFBXFiles();
 
     //if (argc > 1) // real args
     //{
@@ -28,7 +31,6 @@ int main(/*int argc, char* argv[]*/)
     //    std::cout << std::endl;
     //
     //}
-    
     std::cout << std::endl;
 
     return 0;

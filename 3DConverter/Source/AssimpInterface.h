@@ -8,9 +8,10 @@ public:
 	AssimpInterface();
 	~AssimpInterface();
     
-    bool LoadFBX();
-    bool AssimpImport(const std::string& pFile);
+    bool GrabFBXFiles();
+    void FillVertexFormatWithMesh(struct aiMesh* pMesh);
 
 private:
 
+    bool AssimpImport(const std::string& pFile);
 };
