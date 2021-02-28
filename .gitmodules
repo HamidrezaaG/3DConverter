@@ -1,0 +1,3 @@
+[submodule "3DConverter/Libraries/assimp"]
+	path = 3DConverter/Libraries/assimp
+	url = https://github.com/assimp/assimp.git
