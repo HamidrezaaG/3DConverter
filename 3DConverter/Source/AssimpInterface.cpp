@@ -24,7 +24,6 @@ struct vec2
 
 struct VertexFormat
 {
-    uint32_t index = 0;
     vec3 pos, norm;
     vec2 uv;
 };
@@ -69,11 +68,21 @@ bool AssimpInterface::ConvertFBXFiles(char* exeFolderLocation)
 
     for (auto& file : std::filesystem::directory_iterator(inputDirectory))
     {
-    std::cout << file.path().string() << '\n';
+
+    // ensure .fbx extension
+    {
+        size_t dotIndex = file.path().filename().string().find_last_of(".");
+        std::string rawName = file.path().filename().string().substr(dotIndex, file.path().string().length());
+
+        if (rawName != ".fbx") continue;
+    }
+
+    std::cout << file.path().filename().string() << '\n';
 
     AssimpImport(file.path());
     fileNames.push_back(file.path().filename().string());
     inPaths.push_back(file.path().string());// << std::endl;
+
     }
     
     return false;
@@ -91,7 +100,7 @@ bool AssimpInterface::AssimpImport(std::filesystem::path filepath)
 
     const aiScene* scene = importer.ReadFile(pFile,
         aiProcess_CalcTangentSpace |
-        //aiProcess_Triangulate |
+        aiProcess_Triangulate |
         //aiProcess_JoinIdenticalVertices |
         aiProcess_SortByPType);
 
@@ -109,7 +118,7 @@ bool AssimpInterface::AssimpImport(std::filesystem::path filepath)
     std::string rawName = filepath.filename().string().substr(0, dotIndex);
 
     FillVertexDataWithMesh(mesh);
-    WriteVertexDataToFile(rawName.append(".bin"), OutputDirectory.string(), vertData);
+    WriteVertexDataToFile(rawName.append(k_OutputExtension), OutputDirectory.string(), vertData);
     vertData.clear();
 
     // We're done. Everything will be cleaned up by the importer destructor
@@ -121,8 +130,6 @@ void AssimpInterface::WriteVertexDataToFile(const std::string& fileName, const s
 {
     std::fstream file;
 
-    VertexFormat vertformatTemplate;
-
     std::string outpath = outputDir + fileName;
 
     // Delete duplicates
@@ -132,8 +139,8 @@ void AssimpInterface::WriteVertexDataToFile(const std::string& fileName, const s
     file.open(outpath, std::ios::app | std::ios::binary);
 
     if (!file.fail()) {
-        assert(sizeof(ConverterVersion) == 4);
-        file.write(ConverterVersion, sizeof(uint32_t));
+        assert(sizeof(k_ConverterVersion) == 4);
+        file.write(k_ConverterVersion, sizeof(uint32_t));
         for (size_t i = 0; i < vertexData.size(); i++)
         {
             WriteVertex(&file, vertexData[i]);
@@ -146,12 +153,12 @@ void AssimpInterface::WriteVertexDataToFile(const std::string& fileName, const s
 void AssimpInterface::FillVertexDataWithMesh(aiMesh* pMesh)
 {
         uint32_t numVerts = pMesh->mNumVertices;
+        
         vertData.resize(numVerts);
 
         for (uint32_t i = 0; i < numVerts; i++)
         {
             VertexFormat* vert = new VertexFormat();
-            vert->index = i;
 
             vert->pos.x = pMesh->mVertices[i].x;
             vert->pos.y = pMesh->mVertices[i].y;
@@ -161,11 +168,34 @@ void AssimpInterface::FillVertexDataWithMesh(aiMesh* pMesh)
             vert->norm.y = pMesh->mNormals[i].y;
             vert->norm.z = pMesh->mNormals[i].z;
 
-            vert->uv.u = pMesh->mTextureCoords[0][i].x;
-            vert->uv.v = pMesh->mTextureCoords[0][i].y;
+            if (pMesh->HasTextureCoords(0))
+            {
+                vert->uv.u = pMesh->mTextureCoords[0][i].x;
+                vert->uv.v = pMesh->mTextureCoords[0][i].y;
+            }
+            // these are by default initialized to 0 so there's no real need to catch them on the way out.
 
             vertData.at(i) = vert;
         }
+
+
+        // we're going to do face parsing here. return if no faces available 
+        if (!pMesh->HasFaces())
+        return;
+
+        std::vector<VertexFormat*> finalVertData;
+        finalVertData.resize(pMesh->mNumFaces * (uint32_t)3);
+
+        for (size_t i = 0; i < pMesh->mNumFaces; i++)
+        {
+            for (size_t j = 0; j < 3; j++) // Forced Triangulation ensures only Tris exist here.
+            {
+                finalVertData.at(i*3 + j) = vertData.at(pMesh->mFaces[i].mIndices[j]);
+            }
+        }
+
+        vertData = finalVertData;
+
 }
 
 void AssimpInterface::WriteVertex(std::fstream* file, VertexFormat* v)
@@ -173,8 +203,6 @@ void AssimpInterface::WriteVertex(std::fstream* file, VertexFormat* v)
     if (file->is_open())
     {
         std::streamsize sizeTemplate = sizeof(uint32_t);
-
-        file->write( reinterpret_cast <char*> (&(v->index))   , sizeTemplate);
 
         file->write( reinterpret_cast <char*> (&(v->pos.x))   , sizeTemplate);
         file->write( reinterpret_cast <char*> (&(v->pos.y))   , sizeTemplate);
